@@ -1,4 +1,6 @@
-var indices = new Array(32);
+var numTeapotPatches = 32;
+
+var indices = new Array(numTeapotPatches);
 
 indices[0] = [
     0, 1, 2, 3,
