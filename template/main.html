@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Graphics - Project</title>
+    <style>
+        .canvas {
+            border: 2px solid black;
+        }
+
+        .container,
+        .right-container>div,
+        .data-container {
+            display: flex;
+        }
+
+        .left-container,
+        .right-container {
+            margin: 0.5rem;
+        }
+
+        .right-container {
+            margin: 0 5rem;
+        }
+
+        .line-input {
+            margin: 1rem 0;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            margin: .4rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="left-container">
+            <div>
+                <select name="shading" id="shading">
+                    <option value="0">None</option>
+                    <option value="1">Wireframe</option>
+                    <option value="2">Gourand</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <input type="file" name="file" id="file" />
+                <button id="btn-load" style="cursor: pointer;">Load karo</button>
+            </div>
+        </div>
+        <div class="right-container">
+            <canvas class="canvas" id="gl-canvas" width="648" height="648">
+                Oops ... your browser doesn't support the HTML5 canvas element
+            </canvas>
+        </div>
+
+    </div>
+</body>
+
+<script src="{{url_for('static', filename='Common/webgl-utils.js')}}"></script>
+<script src="{{url_for('static', filename='Common/MV.js')}}"></script>
+<script src="{{url_for('static', filename='vertices/teapot.js')}}"></script>
+<!-- <script src="{{url_for('static', filename='Common/initShaders.js')}}"></script> -->
+<script src="{{url_for('static',filename='main.js')}}"></script>
+
+<!-- shading -->
+<!-- <script src="{{url_for('static',filename='wireframe_shading.js')}}"></script> -->
+<!-- <script src="{{url_for('static',filename='gourand_shading.js')}}"></script> -->
+
+</html>
