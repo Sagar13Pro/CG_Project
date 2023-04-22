@@ -5,7 +5,7 @@ CORS(app)
 
 
 @app.route("/")
-def hello_world():
+def Main():
     return render_template("main.html")
 
 
