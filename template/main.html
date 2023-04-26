@@ -23,6 +23,7 @@
         }
 
         .right-container {
+            display: flex;
             margin: 0 5rem;
         }
 
@@ -35,6 +36,10 @@
             justify-content: space-between;
             margin: .4rem 0;
         }
+
+        .flex-d-col {
+            flex-direction: column;
+        }
     </style>
 </head>
 
@@ -46,20 +51,136 @@
                     <option value="0">None</option>
                     <option value="1">Wireframe</option>
                     <option value="2">Gourand</option>
+                    <option value="3">Poung</option>
                 </select>
             </div>
+            <div class="input-group">
+                <label for="objectColor">Object Color</label>
+                <input type="color" name="objectColor" id="objectColor" />
+            </div>
+            <div>
+                <h5>Light Color Selection</h5>
+                <div class="input-group">
+                    <label for="ambientMaterialColor">Ambeint</label>
+                    <input type="color" name="ambientMaterialColor" id="ambientMaterialColor" />
+                </div>
+                <div class="input-group">
+                    <label for="specularMaterialColor">Specular</label>
+                    <input type="color" name="specularMaterialColor" id="specularMaterialColor" />
+                </div>
+                <div class="input-group">
+                    <label for="diffuseMaterialColor">Diffuse</label>
+                    <input type="color" name="diffuseMaterialColor" id="diffuseMaterialColor" />
+                </div>
+            </div>
+            <div>
+                <h5>Material Color Selection</h5>
+                <div class="input-group">
+                    <label for="ambientLightColor">Ambeint</label>
+                    <input type="color" name="ambientLightColor" id="ambientLightColor" />
+                </div>
+                <div class="input-group">
+                    <label for="specularLightColor">Specular</label>
+                    <input type="color" name="specularLightColor" id="specularLightColor" />
+                </div>
+                <div class="input-group">
+                    <label for="diffuseLightColor">Diffuse</label>
+                    <input type="color" name="diffuseLightColor" id="diffuseLightColor" />
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="shiniessColor">Shininess</label>
+                <input type="color" name="shiniessColor" id="shiniessColor" />
+            </div>
+            <div class="input-group">
+                <button id="btnTop">Top</button>
+                <button id="btnBottom">Bottom</button>
+                <button id="btnLeft">Left</button>
+                <button id="btnRight">Right</button>
+            </div>
+            <div class="input-group">
+                <select id="selectTransform">
+                    <option value="0">Select Transformation</option>
+                    <option value="rotate">Rotate</option>
+                    <option value="translate">Translate</option>
+                    <option value="scale">Scale</option>
+                </select>
+            </div>
+        </div>
 
+        <div class="mid-container">
             <div class="input-group">
                 <input type="file" name="file" id="file" />
                 <button id="btn-load" style="cursor: pointer;">Load karo</button>
             </div>
-        </div>
-        <div class="right-container">
-            <canvas class="canvas" id="gl-canvas" width="648" height="648">
+            <canvas class="canvas" id="gl-canvas" width="748" height="600">
                 Oops ... your browser doesn't support the HTML5 canvas element
             </canvas>
         </div>
 
+        <div class="right-container flex-d-col">
+            <div class="flex-d-col">
+                <h5>Control Light Position</h5>
+                <div class="input-group">
+                    <label for="lightPositionX">X</label>
+                    <input type="range" name="lightPositionX" id="lightPositionX" step="1.0" min="0" max="50" />
+                </div>
+                <div class="input-group">
+                    <label for="lightPositionY">Y</label>
+                    <input type="range" name="lightPositionY" id="lightPositionY" step="1.0" min="0" max="50" />
+                </div>
+                <div class="input-group">
+                    <label for="lightPositionZ">Z</label>
+                    <input type="range" name="lightPositionZ" id="lightPositionZ" step="1.0" min="0" max="50" />
+                </div>
+            </div>
+            <div class="flex-d-col">
+                <h5>Control Eye Position</h5>
+                <div class="input-group">
+                    <label for="eyePositionX">X</label>
+                    <input type="range" name="eyePositionX" id="eyePositionX" step="1.0" min="0" max="50" />
+                </div>
+                <div class="input-group">
+                    <label for="eyePositionY">Y</label>
+                    <input type="range" name="eyePositionY" id="eyePositionY" step="1.0" min="0" max="50" />
+                </div>
+                <div class="input-group">
+                    <label for="eyePositionZ">Z</label>
+                    <input type="range" name="eyePositionZ" id="eyePositionZ" step="1.0" min="0" max="50" />
+                </div>
+            </div>
+            <div class="flex-d-col">
+                <h5>At Position</h5>
+                <div class="input-group">
+                    <label for="atX">X</label>
+                    <input type="range" name="atX" id="atX" step="0.1" min="0" max="1" value="0" />
+                </div>
+                <div class="input-group">
+                    <label for="atY">Y</label>
+                    <input type="range" name="atY" id="atY" step="0.1" min="0" max="1" value="0" />
+                </div>
+                <div class="input-group">
+                    <label for="atZ">Z</label>
+                    <input type="range" name="atZ" id="atZ" step="0.1" min="0" max="1" value="0" />
+                </div>
+            </div>
+            <div class="flex-d-col">
+                <h5>Up Position</h5>
+                <div class="input-group">
+                    <label for="upX">X</label>
+                    <input type="range" name="upX" id="upX" step="0.1" min="0" max="1" value="0" />
+                </div>
+                <div class="input-group">
+                    <label for="upY">Y</label>
+                    <input type="range" name="upY" id="upY" step="0.1" min="0" max="1" value="0" />
+                </div>
+                <div class="input-group">
+                    <label for="upZ">Z</label>
+                    <input type="range" name="upZ" id="upZ" step="0.1" min="0" max="1" value="0" />
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 </body>
 
@@ -67,10 +188,8 @@
 <script src="{{url_for('static', filename='Common/MV.js')}}"></script>
 <script src="{{url_for('static', filename='vertices/teapot.js')}}"></script>
 <!-- <script src="{{url_for('static', filename='Common/initShaders.js')}}"></script> -->
+<script src="{{url_for('static',filename='transformation.js')}}"></script>
 <script src="{{url_for('static',filename='vertex_fragment.js')}}"></script>
 <script src="{{url_for('static',filename='main.js')}}"></script>
-<!-- shading -->
-<!-- <script src="{{url_for('static',filename='wireframe_shading.js')}}"></script> -->
-<!-- <script src="{{url_for('static',filename='gourand_shading.js')}}"></script> -->
 
 </html>

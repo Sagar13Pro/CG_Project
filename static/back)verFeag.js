@@ -32,13 +32,6 @@ const TeapotGourandText = {
 
         uniform vec4 lightPosition, eyePosition;
 
-        uniform vec4 atDirection;
-        uniform vec4 upDirection;
-        uniform vec4 leftPosition;
-        uniform vec4 rightPosition;
-        uniform vec4 topPosition;
-        uniform vec4 bottomPosition;
-
         void main() 
         {
             vec3 pos = (modelViewTGP * vPosition).xyz;
@@ -49,6 +42,7 @@ const TeapotGourandText = {
 
             vec3 E = normalize(eyePosition.xyz - pos );
             vec3 H = normalize( L + E );
+            
 
             // Transform vertex normal into eye coordinates
             vec3 N = normalize( normalMatrix*vNormal.xyz);
@@ -66,9 +60,6 @@ const TeapotGourandText = {
 
             gl_Position = projectionMatrix * modelViewTGP * vPosition;
 
-            // Transform vertex position into clip coordinates
-            // gl_Position = projMatrix * viewMatrix * modelViewTGP * vPosition;
-            
             fColor = objectColor * (ambientProduct + diffuse + specular);
             fColor.a = 1.0;
         }`,
@@ -80,6 +71,7 @@ const TeapotGourandText = {
                 gl_FragColor = fColor;
             }`
 }
+
 const TeapotPhongText = {
     'vert': `
         attribute  vec4 vPosition;
@@ -90,14 +82,9 @@ const TeapotPhongText = {
         uniform mat3 normalMatrix;
         uniform mat4 projectionMatrix;
 
-        uniform vec4 objectColor;
         uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+        uniform vec4 lightPosition;
         uniform float shininess;
-        uniform vec3 shininessColor;
-
-        uniform vec4 lightPosition, eyePosition;
-
-        
 
         void main() 
         {
@@ -105,7 +92,7 @@ const TeapotPhongText = {
 
             vec3 light = lightPosition.xyz;
             L = normalize( light - pos );
-            E = normalize( eyePosition.xyz - pos );
+            E = normalize( -pos );
             H = normalize( L + E );
 
             // Transform vertex normal into eye coordinates
@@ -116,17 +103,9 @@ const TeapotPhongText = {
     'frag': `
             precision mediump float;
             varying vec3 N, L, E, H;
-            uniform vec4 objectColor,ambientProduct, diffuseProduct, specularProduct;
+            uniform vec4 ambientProduct, diffuseProduct, specularProduct;
             uniform float shininess;
-            uniform vec3 shininessColor;
 
-
-            uniform vec4 atDirection;
-            uniform vec4 upDirection;
-            uniform vec4 leftPosition;
-            uniform vec4 rightPosition;
-            uniform vec4 topPosition;
-            uniform vec4 bottomPosition;
             void main()
             {
                 vec4 ambient = ambientProduct;
@@ -135,14 +114,13 @@ const TeapotPhongText = {
                 vec4 diffuse = Kd*diffuseProduct;
 
                 float Ks = pow( max(dot(N, H), 0.0), shininess );
-
-                vec4 specular = Ks * specularProduct * vec4(shininessColor, 1.0);
+                vec4 specular = Ks * specularProduct;
 
                 if( dot(L, N) < 0.0 ) {
                     specular = vec4(0.0, 0.0, 0.0, 1.0);
                 } 
 
-                gl_FragColor = objectColor * (ambient + diffuse +specular);
+                gl_FragColor = ambient + diffuse +specular;
                 gl_FragColor.a = 1.0;
             }`
 };
