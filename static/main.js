@@ -5,14 +5,15 @@ let vertexText, fragmentText, currentShade = "0";
 const numTeapotPatches = 32, numDivisions = 3;
 
 // Teapot wireframe let
-let pointsTW = [], indexTW = 0, flagTW = true, thetaTW = [0, 0, 0], axisTW = 0, xAxisTW = 0, yAxisTW = 1, zAxisTW = 2;
+let pointsTW = [], indexTW = 0, flagTW = false, thetaTW = [0, 0, 0], axisTW = 0, xAxisTW = 0, yAxisTW = 1, zAxisTW = 2;
 
 // Teapot Gourand And Phoung let
 let pointsTGP = [], normalsTGP = [], indexTGP = 0, flagTGP = false, thetaTGP = [0, 0, 0], axisTGP = 0, xAxisTGP = 0, yAxisTGP = 1, zAxisTGP = 2;
 
 let selectedTransform = "0";
-// Controls Color 
 
+// Controls Color 
+let TWObjectColor = vec4(1.0, 0.0, 0.0, 1.0);
 let objectColor = vec4(1.0, 1.0, 1.0, 1.0);
 let lightAmbient = vec4(0.2, 0.2, 0.2, 1.0);
 let lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
@@ -111,7 +112,7 @@ const initShaders = () => {
         alert(msg);
         return -1;
     }
-    // !Roto
+    // ! Mouse 
     canvas.addEventListener("mousedown", function (event) {
         if (selectedTransform == "rotate") {
             let x = 2 * event.clientX / canvas.width - 1;
@@ -205,7 +206,6 @@ const TeapotWireframe = (vertices, indices) => {
             vertices[indices[i][j]][1], 1.0]);
         }
 
-
     for (let n = 0; n < numTeapotPatches; n++) {
         let data = new Array(numDivisions + 1);
         for (let j = 0; j <= numDivisions; j++) data[j] = new Array(numDivisions + 1);
@@ -245,15 +245,15 @@ const TeapotWireframe = (vertices, indices) => {
     gl.vertexAttribPointer(vPositionTW, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPositionTW);
 
-    let projection = ortho(-2, 2, -2, 2, -20, 20);
+    projection = ortho(-2, 2, -2, 2, -20, 20);
     gl.uniformMatrix4fv(gl.getUniformLocation(program, "Projection"), false, flatten(projection));
 
     TWrender();
 }
 const TWrender = () => {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    if (!flagTW)
-        thetaTW[axisTW] += 0.5;
+
+
 
     modelViewTW = mat4();
     if (trackballMove && selectedTransform == "rotate") {
@@ -264,12 +264,16 @@ const TWrender = () => {
     } else if (selectedTransform == "scale") {
         let scaleMatrix = scalem(scaled, scaled, scaled);
         modelViewTW = mult(modelViewTW, scaleMatrix);
+    } else if (flagTW) {
+        thetaTW[axisTW] += 0.5;
+        modelViewTW = mult(modelViewTW, rotate(thetaTW[xAxisTW], [1, 0, 0]));
+        modelViewTW = mult(modelViewTW, rotate(thetaTW[yAxisTW], [0, 1, 0]));
+        modelViewTW = mult(modelViewTW, rotate(thetaTW[zAxisTW], [0, 0, 1]));
     }
-    // modelViewTW = mult(modelViewTW, rotate(thetaTW[xAxisTW], [1, 0, 0]));
-    // modelViewTW = mult(modelViewTW, rotate(thetaTW[yAxisTW], [0, 1, 0]));
-    // modelViewTW = mult(modelViewTW, rotate(thetaTW[zAxisTW], [0, 0, 1]));
+
 
     gl.uniformMatrix4fv(gl.getUniformLocation(program, "ModelView"), false, flatten(modelViewTW));
+    gl.uniform4fv(gl.getUniformLocation(program, "TWObjectColor"), flatten(TWObjectColor))
 
     for (let i = 0; i < indexTW; i += 3)
         gl.drawArrays(gl.LINE_LOOP, i, 3);
@@ -408,7 +412,13 @@ const TGPrender = () => {
     } else if (selectedTransform == "scale") {
         let scaleMatrix = scalem(scaled, scaled, scaled);
         modelViewTGP = mult(modelViewTGP, scaleMatrix);
-    } else {
+    } else if (flagTGP) {
+        thetaTGP[axisTGP] += 0.5;
+        modelViewTGP = mult(modelViewTGP, rotate(thetaTGP[xAxisTGP], [1, 0, 0]));
+        modelViewTGP = mult(modelViewTGP, rotate(thetaTGP[yAxisTGP], [0, 1, 0]));
+        modelViewTGP = mult(modelViewTGP, rotate(thetaTGP[zAxisTGP], [0, 0, 1]));
+    }
+    else {
         eye = vec3(Math.sin(phi), Math.sin(theta), Math.cos(phi));
         modelViewTGP = lookAt(eye, at, up);
     }
@@ -459,8 +469,7 @@ btn_button.onclick = () => {
 }
 const LoadVertices = () => {
     const file = loaded_file.files[0]
-    console.log(file)
-    fetch(`http://localhost:8000/static/vertices/teapot.js`)
+    fetch(`http://localhost:8000/static/vertices/${file.name}`)
         .then(res => res.text())
         .then(data => {
             eval(data)
@@ -471,7 +480,7 @@ const LoadVertices = () => {
             else
                 TeapotGourandAndPhoung(vertices, indices)
         })
-        .catch(err => console.log(err))
+        .catch(err => alert("The file is not within the directory"))
 }
 
 document.getElementById("shading").onchange = e => {
@@ -489,14 +498,17 @@ document.getElementById("shading").onchange = e => {
             fragmentText = TeapotPhongText.frag
         }
     }
-    initShaders()
-    LoadVertices()
+    // initShaders()
+    // LoadVertices()
 }
 
 // Color Selection
 document.getElementById("objectColor").onchange = e => {
     let { r, g, b } = HEXtoRGB(e.target.value)
-    objectColor = vec4(r, g, b, 1.0)
+    if (currentShade == 1)
+        TWObjectColor = vec4(r, g, b, 1.0);
+    else
+        objectColor = vec4(r, g, b, 1.0)
 }
 
 document.getElementById("ambientLightColor").onchange = e => {
@@ -562,16 +574,16 @@ document.getElementById("btnBottom").onclick = function () { theta -= dr; };
 
 document.getElementById("selectTransform").onchange = e => selectedTransform = e.target.value;
 
-// window.onload = () => {
-// canvas = document.getElementById("gl-canvas");
-    // gl = WebGLUtils.setupWebGL(canvas);
-    // if (!gl) {
-    //     alert("WebGL isn't available");
-    //     return
-    // }
-    // gl.viewport(0, 0, canvas.width, canvas.height);
-    // gl.clearColor(1.0, 1.0, 1.0, 1.0);
-    // gl.enable(gl.DEPTH_TEST);
-    // vertexText = TeapotWireframeText.vert
-    // fragmentText = TeapotWireframeText.frag
-// }
+document.getElementById("Autoroto").onchange = e => {
+    if (currentShade == "1")
+        flagTW = e.target.value
+    else
+        flagTGP = e.target.value
+}
+
+document.getElementById("selectAxis").onchange = e => {
+    if (currentShade == "1")
+        axisTW = e.target.value
+    else
+        axisTGP = e.target.value
+}

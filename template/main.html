@@ -51,7 +51,7 @@
                     <option value="0">None</option>
                     <option value="1">Wireframe</option>
                     <option value="2">Gourand</option>
-                    <option value="3">Poung</option>
+                    <option value="3">Phoung</option>
                 </select>
             </div>
             <div class="input-group">
@@ -106,6 +106,18 @@
                     <option value="scale">Scale</option>
                 </select>
             </div>
+            <div class="input-group">
+                <label for="Autoroto">Auto rotate</label>
+                <input type="checkbox" name="Autoroto" id="Autoroto">
+            </div>
+            <div class="input-group">
+                <select id="selectAxis">
+                    <option value="-1">Select Axis</option>
+                    <option value="0">X</option>
+                    <option value="1">Y</option>
+                    <option value="2">Z</option>
+                </select>
+            </div>
         </div>
 
         <div class="mid-container">
@@ -123,30 +135,30 @@
                 <h5>Control Light Position</h5>
                 <div class="input-group">
                     <label for="lightPositionX">X</label>
-                    <input type="range" name="lightPositionX" id="lightPositionX" step="1.0" min="0" max="50" />
+                    <input type="range" name="lightPositionX" id="lightPositionX" step="1" min="0" max="50" value="0" />
                 </div>
                 <div class="input-group">
                     <label for="lightPositionY">Y</label>
-                    <input type="range" name="lightPositionY" id="lightPositionY" step="1.0" min="0" max="50" />
+                    <input type="range" name="lightPositionY" id="lightPositionY" step="1" min="0" max="50" value="0" />
                 </div>
                 <div class="input-group">
                     <label for="lightPositionZ">Z</label>
-                    <input type="range" name="lightPositionZ" id="lightPositionZ" step="1.0" min="0" max="50" />
+                    <input type="range" name="lightPositionZ" id="lightPositionZ" step="1" min="0" max="50" value="0" />
                 </div>
             </div>
             <div class="flex-d-col">
                 <h5>Control Eye Position</h5>
                 <div class="input-group">
                     <label for="eyePositionX">X</label>
-                    <input type="range" name="eyePositionX" id="eyePositionX" step="1.0" min="0" max="50" />
+                    <input type="range" name="eyePositionX" id="eyePositionX" step="1" min="0" max="50" value="0" />
                 </div>
                 <div class="input-group">
                     <label for="eyePositionY">Y</label>
-                    <input type="range" name="eyePositionY" id="eyePositionY" step="1.0" min="0" max="50" />
+                    <input type="range" name="eyePositionY" id="eyePositionY" step="1" min="0" max="50" value="0" />
                 </div>
                 <div class="input-group">
                     <label for="eyePositionZ">Z</label>
-                    <input type="range" name="eyePositionZ" id="eyePositionZ" step="1.0" min="0" max="50" />
+                    <input type="range" name="eyePositionZ" id="eyePositionZ" step="1" min="0" max="50" value="0" />
                 </div>
             </div>
             <div class="flex-d-col">
@@ -186,8 +198,7 @@
 
 <script src="{{url_for('static', filename='Common/webgl-utils.js')}}"></script>
 <script src="{{url_for('static', filename='Common/MV.js')}}"></script>
-<script src="{{url_for('static', filename='vertices/teapot.js')}}"></script>
-<!-- <script src="{{url_for('static', filename='Common/initShaders.js')}}"></script> -->
+
 <script src="{{url_for('static',filename='transformation.js')}}"></script>
 <script src="{{url_for('static',filename='vertex_fragment.js')}}"></script>
 <script src="{{url_for('static',filename='main.js')}}"></script>
