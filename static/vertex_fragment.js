@@ -42,25 +42,11 @@ const TeapotGourandText = {
 
         attribute  vec2 vTexCoord;
         varying vec2 fTexCoord;
-
-        uniform vec3 objTangent; 
-
-        varying vec3 L1;
-        varying vec3 L2;
+        
         void main() 
         {
             vec3 pos = (modelViewTGP * vPosition).xyz;
-
             vec3 light = lightPosition.xyz;
-
-            // added
-            vec3 eyePosition = (modelViewTGP*vPosition).xyz;
-            vec3 eyeLightPos = (modelViewTGP*lightPosition).xyz;
-
-            
-            vec3 T  = normalize(normalMatrix*objTangent);
-            vec3 B = cross(N, T);
-            // aaiya ver 
 
             vec3 N = normalize( normalMatrix*vNormal.xyz);
             vec3 L = normalize( light - pos );
@@ -75,22 +61,6 @@ const TeapotGourandText = {
             if( dot(L, N) < 0.0 ) {
             specular = vec4(0.0, 0.0, 0.0, 1.0);
             } 
-
-                /* light vector in texture space */
-
-                L.x = dot(T, eyeLightPos-eyePosition);
-                L.y = dot(B, eyeLightPos-eyePosition);
-                L.z = dot(N, eyeLightPos-eyePosition);
-
-                L = normalize(L);
-
-                /* view vector in texture space */
-
-                V.x = dot(T, -eyePosition);
-                V.y = dot(B, -eyePosition);
-                V.z = dot(N, -eyePosition);
-
-                V = normalize(V);
 
             gl_Position = projectionMatrix * modelViewTGP * vPosition;
             
