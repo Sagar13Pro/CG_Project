@@ -24,7 +24,6 @@
 
         .right-container {
             display: flex;
-            margin: 0 5rem;
         }
 
         .line-input {
@@ -39,6 +38,18 @@
 
         .flex-d-col {
             flex-direction: column;
+        }
+
+        .mx-2 {
+            margin: 0 .25rem;
+        }
+
+        .mx-1 {
+            margin: 0 1rem;
+        }
+
+        h5 {
+            text-align: center;
         }
     </style>
 </head>
@@ -120,7 +131,7 @@
             </div>
         </div>
 
-        <div class="mid-container">
+        <div class="mid-container mx-2">
             <div class="input-group">
                 <input type="file" name="file" id="file" />
                 <button id="btn-load" style="cursor: pointer;">Load karo</button>
@@ -131,69 +142,83 @@
         </div>
 
         <div class="right-container flex-d-col">
-            <div class="flex-d-col">
-                <h5>Control Light Position</h5>
-                <div class="input-group">
-                    <label for="lightPositionX">X</label>
-                    <input type="range" name="lightPositionX" id="lightPositionX" step="1" min="0" max="50" value="0" />
+            <div>
+                <div>
+                    <h5>Control Light Position</h5>
+                    <div class="input-group">
+                        <label for="lightPositionX">X</label>
+                        <input type="range" name="lightPositionX" id="lightPositionX" step="1" min="0" max="50"
+                            value="0" />
+                    </div>
+                    <div class="input-group">
+                        <label for="lightPositionY">Y</label>
+                        <input type="range" name="lightPositionY" id="lightPositionY" step="1" min="0" max="50"
+                            value="0" />
+                    </div>
+                    <div class="input-group">
+                        <label for="lightPositionZ">Z</label>
+                        <input type="range" name="lightPositionZ" id="lightPositionZ" step="1" min="0" max="50"
+                            value="0" />
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="lightPositionY">Y</label>
-                    <input type="range" name="lightPositionY" id="lightPositionY" step="1" min="0" max="50" value="0" />
-                </div>
-                <div class="input-group">
-                    <label for="lightPositionZ">Z</label>
-                    <input type="range" name="lightPositionZ" id="lightPositionZ" step="1" min="0" max="50" value="0" />
-                </div>
-            </div>
-            <div class="flex-d-col">
-                <h5>Control Eye Position</h5>
-                <div class="input-group">
-                    <label for="eyePositionX">X</label>
-                    <input type="range" name="eyePositionX" id="eyePositionX" step="1" min="0" max="50" value="0" />
-                </div>
-                <div class="input-group">
-                    <label for="eyePositionY">Y</label>
-                    <input type="range" name="eyePositionY" id="eyePositionY" step="1" min="0" max="50" value="0" />
-                </div>
-                <div class="input-group">
-                    <label for="eyePositionZ">Z</label>
-                    <input type="range" name="eyePositionZ" id="eyePositionZ" step="1" min="0" max="50" value="0" />
-                </div>
-            </div>
-            <div class="flex-d-col">
-                <h5>At Position</h5>
-                <div class="input-group">
-                    <label for="atX">X</label>
-                    <input type="range" name="atX" id="atX" step="0.1" min="0" max="1" value="0" />
-                </div>
-                <div class="input-group">
-                    <label for="atY">Y</label>
-                    <input type="range" name="atY" id="atY" step="0.1" min="0" max="1" value="0" />
-                </div>
-                <div class="input-group">
-                    <label for="atZ">Z</label>
-                    <input type="range" name="atZ" id="atZ" step="0.1" min="0" max="1" value="0" />
+                <div class="mx-1">
+                    <h5>Control Eye Position</h5>
+                    <div class="input-group">
+                        <label for="eyePositionX">X</label>
+                        <input type="range" name="eyePositionX" id="eyePositionX" step="1" min="0" max="50" value="0" />
+                    </div>
+                    <div class="input-group">
+                        <label for="eyePositionY">Y</label>
+                        <input type="range" name="eyePositionY" id="eyePositionY" step="1" min="0" max="50" value="0" />
+                    </div>
+                    <div class="input-group">
+                        <label for="eyePositionZ">Z</label>
+                        <input type="range" name="eyePositionZ" id="eyePositionZ" step="1" min="0" max="50" value="0" />
+                    </div>
                 </div>
             </div>
-            <div class="flex-d-col">
-                <h5>Up Position</h5>
-                <div class="input-group">
-                    <label for="upX">X</label>
-                    <input type="range" name="upX" id="upX" step="0.1" min="0" max="1" value="0" />
+            <div>
+                <div>
+                    <h5>At Position</h5>
+                    <div class="input-group">
+                        <label for="atX">X</label>
+                        <input type="range" name="atX" id="atX" step="0.1" min="0" max="1" value="0" />
+                    </div>
+                    <div class="input-group">
+                        <label for="atY">Y</label>
+                        <input type="range" name="atY" id="atY" step="0.1" min="0" max="1" value="0" />
+                    </div>
+                    <div class="input-group">
+                        <label for="atZ">Z</label>
+                        <input type="range" name="atZ" id="atZ" step="0.1" min="0" max="1" value="0" />
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="upY">Y</label>
-                    <input type="range" name="upY" id="upY" step="0.1" min="0" max="1" value="0" />
+                <div class="mx-1">
+                    <h5>Up Position</h5>
+                    <div class="input-group">
+                        <label for="upX">X</label>
+                        <input type="range" name="upX" id="upX" step="0.1" min="0" max="1" value="0" />
+                    </div>
+                    <div class="input-group">
+                        <label for="upY">Y</label>
+                        <input type="range" name="upY" id="upY" step="0.1" min="0" max="1" value="0" />
+                    </div>
+                    <div class="input-group">
+                        <label for="upZ">Z</label>
+                        <input type="range" name="upZ" id="upZ" step="0.1" min="0" max="1" value="0" />
+                    </div>
                 </div>
+            </div>
+            <div>
                 <div class="input-group">
-                    <label for="upZ">Z</label>
-                    <input type="range" name="upZ" id="upZ" step="0.1" min="0" max="1" value="0" />
+                    <label for="texImage">Add Texture</label>
+                    <input type="text" id="texImage" />
                 </div>
             </div>
         </div>
     </div>
     </div>
+    <!-- <img id="texImage" src="{{url_for('static',filename='1.jpg')}}" hidden></img> -->
 </body>
 
 <script src="{{url_for('static', filename='Common/webgl-utils.js')}}"></script>

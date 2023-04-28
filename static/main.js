@@ -1,4 +1,4 @@
-let program = 0, gl = 0, canvas;
+let program = 0, gl = 0, canvas, src;
 
 let vertexText, fragmentText, currentShade = "0";
 
@@ -43,6 +43,19 @@ let far = 200;
 let theta = 0.0;
 let phi = 0.0;
 let dr = 5.0 * Math.PI / 180.0;
+
+// ! Texture Var
+
+let texture;
+
+var texCoord = [
+    vec2(0, 0),
+    vec2(0, 1),
+    vec2(1, 1),
+    vec2(1, 0)
+];
+
+let texCoordsArray = [];
 
 
 // color converting
@@ -192,6 +205,36 @@ let nbezier = function (u) {
     return b;
 }
 
+// Extra Credit Block Start
+// ! Texture Adding 
+
+function isPowerOf2(value) {
+    return (value & (value - 1)) === 0;
+}
+function configureTexture(src) {
+
+    texture = gl.createTexture();
+
+    const image = new Image();
+    image.onload = () => {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+        if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+            gl.generateMipmap(gl.TEXTURE_2D);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        } else {
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        }
+    }
+    image.src = src
+    gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
+}
+// Extra Credit Block End
+
 // ! Wireframe
 
 const TeapotWireframe = (vertices, indices) => {
@@ -252,9 +295,6 @@ const TeapotWireframe = (vertices, indices) => {
 }
 const TWrender = () => {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-
-
     modelViewTW = mat4();
     if (trackballMove && selectedTransform == "rotate") {
         axis = normalize(axis);
@@ -359,16 +399,28 @@ const TeapotGourandAndPhoung = (vertices, indices) => {
         for (let i = 0; i < numDivisions; i++) for (let j = 0; j < numDivisions; j++) {
             pointsTGP.push(data[i][j]);
             normalsTGP.push(ndata[i][j]);
+            texCoordsArray.push(texCoord[0]);
+
             pointsTGP.push(data[i + 1][j]);
             normalsTGP.push(ndata[i + 1][j]);
+            texCoordsArray.push(texCoord[1]);
+
             pointsTGP.push(data[i + 1][j + 1]);
             normalsTGP.push(ndata[i + 1][j + 1]);
+            texCoordsArray.push(texCoord[2]);
+
             pointsTGP.push(data[i][j]);
             normalsTGP.push(ndata[i][j]);
+            texCoordsArray.push(texCoord[0]);
+
             pointsTGP.push(data[i + 1][j + 1]);
             normalsTGP.push(ndata[i + 1][j + 1]);
+            texCoordsArray.push(texCoord[2]);
+
             pointsTGP.push(data[i][j + 1]);
             normalsTGP.push(ndata[i][j + 1]);
+            texCoordsArray.push(texCoord[3]);
+
             indexTGP += 6;
         }
     }
@@ -390,20 +442,22 @@ const TeapotGourandAndPhoung = (vertices, indices) => {
     gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vNormal);
 
+    var tBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, tBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW);
+
+    var vTexCoord = gl.getAttribLocation(program, "vTexCoord");
+    gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(vTexCoord);
+
     normalMatrixLoc = gl.getUniformLocation(program, "normalMatrix");
+
     TGPrender();
 }
 const TGPrender = () => {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // if (flagTGP)
-    //     thetaTGP[axisTGP] += 0.5;
-    //  modelViewTGP = mult(modelViewTGP, rotate(thetaTGP[xAxisTGP], [1, 0, 0]));
-    // modelViewTGP = mult(modelViewTGP, rotate(thetaTGP[yAxisTGP], [0, 1, 0]));
-    // modelViewTGP = mult(modelViewTGP, rotate(thetaTGP[zAxisTGP], [0, 0, 1]));
-
     let modelViewTGP = mat4();
-
     if (trackballMove && selectedTransform == "rotate") {
         axis = normalize(axis);
         modelViewTGP = mult(modelViewTGP, rotate(angle, axis));
@@ -448,7 +502,6 @@ const TGPrender = () => {
 
     gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"), flatten(lightPosition));
     gl.uniform4fv(gl.getUniformLocation(program, "eyePosition"), flatten(eyePosition));
-
     gl.drawArrays(gl.TRIANGLES, 0, indexTGP);
     requestAnimFrame(TGPrender);
 }
@@ -469,7 +522,7 @@ btn_button.onclick = () => {
 }
 const LoadVertices = () => {
     const file = loaded_file.files[0]
-    fetch(`http://localhost:8000/static/vertices/${file.name}`)
+    fetch(`http://localhost:8000/static/vertices/${file ? file.name : "teapot.js"}`)
         .then(res => res.text())
         .then(data => {
             eval(data)
@@ -498,8 +551,8 @@ document.getElementById("shading").onchange = e => {
             fragmentText = TeapotPhongText.frag
         }
     }
-    // initShaders()
-    // LoadVertices()
+    initShaders()
+    LoadVertices()
 }
 
 // Color Selection
@@ -587,3 +640,6 @@ document.getElementById("selectAxis").onchange = e => {
     else
         axisTGP = e.target.value
 }
+let imageSrc = document.getElementById("texImage")
+
+imageSrc.onchange = e => { configureTexture(e.target.value) }
