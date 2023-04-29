@@ -24,6 +24,7 @@ let materialDiffuse = vec4(1.0, 0.8, 0.0, 1.0);
 let materialSpecular = vec4(1.0, 0.8, 0.0, 1.0);
 let shininessColor = vec3(0.0, 1.0, 0.0);
 
+let normalMatrixLoc;
 let materialShininess = 10.0;
 
 // Control Position
