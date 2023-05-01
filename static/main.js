@@ -4,11 +4,14 @@ let vertexText, fragmentText, currentShade = "0";
 
 const numTeapotPatches = 32, numDivisions = 3;
 
-// Teapot wireframe let
+// Teapot wireframe
 let pointsTW = [], indexTW = 0, flagTW = false, thetaTW = [0, 0, 0], axisTW = 0, xAxisTW = 0, yAxisTW = 1, zAxisTW = 2;
 
-// Teapot Gourand And Phoung let
+// Teapot Gourand And Phoung
 let pointsTGP = [], normalsTGP = [], indexTGP = 0, flagTGP = false, thetaTGP = [0, 0, 0], axisTGP = 0, xAxisTGP = 0, yAxisTGP = 1, zAxisTGP = 2;
+
+// Cube 
+var numVertices = 36, pointsArray = [], normalsArray = [], modelView, projection, viewerPos;
 
 let selectedTransform = "0";
 
@@ -47,6 +50,7 @@ let dr = 5.0 * Math.PI / 180.0;
 
 // ! Texture Var
 
+let isTextureEnabled = false;
 let texture;
 
 var texCoord = [
@@ -57,7 +61,6 @@ var texCoord = [
 ];
 
 let texCoordsArray = [];
-
 
 // color converting
 const HEXtoRGB = hex => {
@@ -209,10 +212,10 @@ let nbezier = function (u) {
 // Extra Credit Block Start
 // ! Texture Adding 
 
-function isPowerOf2(value) {
+const isPowerOf2 = (value) => {
     return (value & (value - 1)) === 0;
 }
-function configureTexture(src) {
+const configureTexture = (src) => {
 
     texture = gl.createTexture();
 
@@ -231,6 +234,7 @@ function configureTexture(src) {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         }
     }
+    image.crossOrigin = "";
     image.src = src
     gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
 }
@@ -296,6 +300,7 @@ const TeapotWireframe = (vertices, indices) => {
 }
 const TWrender = () => {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
     modelViewTW = mat4();
     if (trackballMove && selectedTransform == "rotate") {
         axis = normalize(axis);
@@ -310,8 +315,10 @@ const TWrender = () => {
         modelViewTW = mult(modelViewTW, rotate(thetaTW[xAxisTW], [1, 0, 0]));
         modelViewTW = mult(modelViewTW, rotate(thetaTW[yAxisTW], [0, 1, 0]));
         modelViewTW = mult(modelViewTW, rotate(thetaTW[zAxisTW], [0, 0, 1]));
+    } else {
+        eye = vec3(Math.sin(phi), Math.sin(theta), Math.cos(phi));
+        modelViewTW = lookAt(eye, at, up);
     }
-
 
     gl.uniformMatrix4fv(gl.getUniformLocation(program, "ModelView"), false, flatten(modelViewTW));
     gl.uniform4fv(gl.getUniformLocation(program, "TWObjectColor"), flatten(TWObjectColor))
@@ -452,7 +459,6 @@ const TeapotGourandAndPhoung = (vertices, indices) => {
     gl.enableVertexAttribArray(vTexCoord);
 
     normalMatrixLoc = gl.getUniformLocation(program, "normalMatrix");
-
     TGPrender();
 }
 const TGPrender = () => {
@@ -472,12 +478,11 @@ const TGPrender = () => {
         modelViewTGP = mult(modelViewTGP, rotate(thetaTGP[xAxisTGP], [1, 0, 0]));
         modelViewTGP = mult(modelViewTGP, rotate(thetaTGP[yAxisTGP], [0, 1, 0]));
         modelViewTGP = mult(modelViewTGP, rotate(thetaTGP[zAxisTGP], [0, 0, 1]));
-    }
-    else {
+    } else {
         eye = vec3(Math.sin(phi), Math.sin(theta), Math.cos(phi));
         modelViewTGP = lookAt(eye, at, up);
     }
-
+    gl.uniform1i(gl.getUniformLocation(program, "isTextureEnabled"), isTextureEnabled);
     gl.uniformMatrix4fv(gl.getUniformLocation(program, "modelViewTGP"), false, flatten(modelViewTGP));
 
     projectionMatrix = ortho(-4, 4, -4, 4, -200, 200);
@@ -503,6 +508,7 @@ const TGPrender = () => {
 
     gl.uniform4fv(gl.getUniformLocation(program, "lightPosition"), flatten(lightPosition));
     gl.uniform4fv(gl.getUniformLocation(program, "eyePosition"), flatten(eyePosition));
+
     gl.drawArrays(gl.TRIANGLES, 0, indexTGP);
     requestAnimFrame(TGPrender);
 }
@@ -514,16 +520,14 @@ let btn_button = document.getElementById("btn-load")
 let loaded_file = document.getElementById("file")
 
 btn_button.onclick = () => {
-    console.log(currentShade)
     if (currentShade != "0") {
-        initShaders()
         LoadVertices()
     } else
         alert("no shading selected")
 }
 const LoadVertices = () => {
     const file = loaded_file.files[0]
-    fetch(`http://localhost:8000/static/vertices/${file ? file.name : "teapot.js"}`)
+    fetch(`http://localhost:8000/static/vertices/${file ? file.name : 'teapot.js'}`)
         .then(res => res.text())
         .then(data => {
             eval(data)
@@ -534,7 +538,7 @@ const LoadVertices = () => {
             else
                 TeapotGourandAndPhoung(vertices, indices)
         })
-        .catch(err => alert("The file is not within the directory"))
+        .catch(err => console.log(err))
 }
 
 document.getElementById("shading").onchange = e => {
@@ -552,8 +556,8 @@ document.getElementById("shading").onchange = e => {
             fragmentText = TeapotPhongText.frag
         }
     }
+    LoadVertices();
     initShaders()
-    LoadVertices()
 }
 
 // Color Selection
@@ -619,10 +623,10 @@ document.getElementById("upY").onchange = e => up[1] = parseFloat(e.target.value
 document.getElementById("upZ").onchange = e => up[2] = parseFloat(e.target.value);
 
 // ! Position Left, Right, Top and Down
-document.getElementById("btnLeft").onclick = function () { phi += dr; };
-document.getElementById("btnRight").onclick = function () { phi -= dr; };
-document.getElementById("btnTop").onclick = function () { theta += dr; };
-document.getElementById("btnBottom").onclick = function () { theta -= dr; };
+document.getElementById("btnLeft").onclick = () => phi += dr;
+document.getElementById("btnRight").onclick = () => phi -= dr;
+document.getElementById("btnTop").onclick = () => theta += dr;
+document.getElementById("btnBottom").onclick = () => theta -= dr;
 
 // ! tranformation
 
@@ -641,6 +645,16 @@ document.getElementById("selectAxis").onchange = e => {
     else
         axisTGP = e.target.value
 }
-let imageSrc = document.getElementById("texImage")
 
-imageSrc.onchange = e => { configureTexture(e.target.value) }
+
+document.getElementById("enableTexture").onchange = e => {
+    let texImageCon = document.getElementById("texImageCon")
+    if (e.target.checked) {
+        texImageCon.setAttribute("class", "input-group show")
+        document.getElementById("texImage").onchange = e => { configureTexture(`http://localhost:8000/static/texture_image/${e.target.value}`) }
+        isTextureEnabled = true;
+    } else {
+        isTextureEnabled = false;
+        texImageCon.setAttribute("class", "input-group hide");
+    }
+}

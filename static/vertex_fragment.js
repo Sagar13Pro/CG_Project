@@ -74,9 +74,14 @@ const TeapotGourandText = {
             varying  vec2 fTexCoord;
 
             uniform sampler2D texture;
+
+             uniform bool isTextureEnabled;
             void main()
             {
-                gl_FragColor = fColor * texture2D( texture, fTexCoord );
+                if(isTextureEnabled)
+                    gl_FragColor =  texture2D( texture, fTexCoord );
+                else 
+                    gl_FragColor = fColor;
             }`
 }
 const TeapotPhongText = {
@@ -131,6 +136,8 @@ const TeapotPhongText = {
             varying  vec2 fTexCoord;
             uniform sampler2D texture;
 
+            uniform bool isTextureEnabled;
+
             void main()
             {
                 vec4 ambient = ambientProduct;
@@ -146,8 +153,10 @@ const TeapotPhongText = {
                     specular = vec4(0.0, 0.0, 0.0, 1.0);
                 } 
 
-                gl_FragColor = objectColor * (ambient + diffuse +specular) * texture2D( texture, fTexCoord );;
+                if(isTextureEnabled)
+                   gl_FragColor = objectColor * texture2D( texture, fTexCoord );
+                else 
+                    gl_FragColor = objectColor * (ambient + diffuse +specular);
                 gl_FragColor.a = 1.0;
             }`
 };
-
